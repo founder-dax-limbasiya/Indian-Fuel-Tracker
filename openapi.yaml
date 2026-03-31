@@ -1,0 +1,108 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: India Fuel Price Tracker API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: fuel
+    description: Fuel price operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /fuel/prices:
+    get:
+      operationId: getFuelPrices
+      tags: [fuel]
+      summary: Get today's fuel prices for all cities
+      responses:
+        "200":
+          description: List of city fuel prices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CityFuelPrice"
+  /fuel/trend/{city}:
+    get:
+      operationId: getCityTrend
+      tags: [fuel]
+      summary: Get 30-day price trend for a city
+      parameters:
+        - name: city
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 30-day price trend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PriceTrendPoint"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    CityFuelPrice:
+      type: object
+      properties:
+        city:
+          type: string
+        state:
+          type: string
+        petrolPrice:
+          type: number
+        dieselPrice:
+          type: number
+        petrolChange:
+          type: number
+        dieselChange:
+          type: number
+        updatedAt:
+          type: string
+      required:
+        - city
+        - state
+        - petrolPrice
+        - dieselPrice
+        - petrolChange
+        - dieselChange
+        - updatedAt
+    PriceTrendPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        petrolPrice:
+          type: number
+        dieselPrice:
+          type: number
+      required:
+        - date
+        - petrolPrice
+        - dieselPrice
